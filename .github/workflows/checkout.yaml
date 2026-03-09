@@ -1,0 +1,25 @@
+name: Checkout Workflow
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  checkout:
+    runs-on: ubuntu-latest
+    steps:
+      # 1. 체크아웃 전: 아무것도 없는 빈 상태 확인
+      - name: Before Checkout
+        run: ls -al
+
+      # 2. 깃허브 저장소 코드를 가상 서버로 가져오기
+      - name: Do Checkout
+        uses: actions/checkout@v3
+
+      # 3. 체크아웃 후: 파일들이 들어온 상태 확인
+      - name: After Checkout
+        run: ls -al
+
+      # 4. 방금 만든 이 파일의 내용 출력해보기
+      - name: Cat checkout file
+        run: cat .github/workflows/checkout.yml

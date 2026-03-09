@@ -1,19 +1,37 @@
-name: Test Schedule Workflow
+name: Combined CI and Schedule Workflow
 
+# 1. 트리거 설정 (언제 실행할지)
 on:
   push:
-    branches: [ master ]
+    branches: [ master ]  # master 브랜치에 push될 때 실행
   schedule:
-    - cron: '30 5 * * 1,3'
-    - cron: '30 5 * * 2,4'
+    - cron: '30 5 * * 1,3'  # 월, 수 오전 5:30
+    - cron: '30 5 * * 2,4'  # 화, 목 오전 5:30
 
+# 2. 작업 설정 (무엇을 실행할지)
 jobs:
+  # 첫 번째 작업: 간단한 출력
+  echo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hello Step
+        run: echo 'Hello, Github Actions'
+
+  # 두 번째 작업: 디렉토리 확인 및 파일 목록 출력 (echo와 동시에 병렬 실행)
+  pwd-ls:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print working directory
+        run: pwd
+      - name: Change Directory and List files
+        run: |
+          cd ~
+          ls -al
+
+  # 세 번째 작업: 스케줄링 전용 테스트
   test_schedule:
     runs-on: ubuntu-latest
     steps:
-      - name: Check schedule
-        run: |
-          echo "Current event: ${{ github.event_name }}"
       - name: Not on Monday or Wednesday
         if: github.event.schedule != '30 5 * * 1,3'
         run: echo "This step will be skipped on Monday and Wednesday"
